@@ -63,7 +63,12 @@ const spellsMaster = {
 }
 // Attack Command
 const attack = (user,target)=>{
-
+let hits = Math.floor(1+((Math.random()*user.agility)/5))
+for(let i = 0;i<hits;i++){
+    damage = Math.floor(Math.random()*(user.attack/20)+user.attack)
+    target.hp -=damage
+    console.log(`enemy takes ${damage} damage`)
+}   
 }
 
 // player stats and current inventory 
@@ -76,9 +81,10 @@ const player ={
 const fighter = {
     name : 'fighter',
     level : 1,
+    attack : 36,
     hp : 100,
     mp : 0,
-    strength : 8,
+    strength : 10,
     agility : 6,
     intellect : 4,//Int will be spell damage modifier
     defense : 10,
@@ -89,6 +95,7 @@ const fighter = {
 }
 const monk = {
     level : 1,
+    attack: 28,
     hp : 80,
     mp : 0,
     strength : 8,
@@ -103,6 +110,7 @@ const monk = {
 }
 const whiteMage = {
     level : 1,
+    attack:12,
     hp : 60,
     mp : 10,
     strength : 4,
@@ -118,6 +126,7 @@ const whiteMage = {
 }
 const blackMage = {
     level : 1,
+    attack: 15,
     hp : 60,
     mp : 10,
     strength : 4,
@@ -158,3 +167,4 @@ const combat = () =>{
 }
 console.log(spellsMaster.fire(blackMage,goblin));
 console.log(spellsMaster.thunder(blackMage,goblin))
+attack(monk,goblin)
