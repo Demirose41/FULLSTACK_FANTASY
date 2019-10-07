@@ -1,33 +1,78 @@
 // Master Lists of items 
-const itemList ={
+const itemsMaster ={
     potion: function(obj){
          if(player.inventory.includes('potion')){
             obj.hp+=100
             console.log(`${obj.name} uses a potion\n ${obj.hp}`)
             let index = player.inventory.indexOf('potion')
             player.inventory.splice(index,1);
-        }else{
-            console.log('You dont have anymore')
         }
-
     },
     hiPotion: function(obj){
-        obj.hp+=500
-        console.log(`${obj.name} uses a hi-potion`)
+        if(player.inventory.includes('hi-potion')){
+            obj.hp+=500
+            console.log(`${obj.name} uses a hi-potion`)
+            let index = player.inventory.indexOf('hi-potion')
+            player.inventory.splice(index,1);
+        }
     },
     ether: function(obj){
-        obj.mp+=10
-        console.log(`${obj.name} uses an ether`)
+        if(player.inventory.includes('ether')){
+            obj.mp+=10
+            console.log(`${obj.name} uses an ether`)
+            let index = player.inventory.indexOf('hi-potion')
+            player.inventory.splice(index,1)
+        }
     }
 }
+// Master Spell list
+const spellsMaster = {
+    fire : function(caster,target){
+       let typeBonus = 1
+       if(target.weakness.includes('fire')){
+           typeBonus = 1.5;
+       }
+        let damage= ((caster.intellect * 2)+Math.floor(Math.random()*10 +55)*typeBonus)
+        caster.mp-- 
+        target.hp -=damage
+        console.log(`${target.hp} Target HP \n ${caster.mp} Caster MP `)
+       return damage
+    },
+    thunder : function(caster,target){
+        let typeBonus = 1
+        if(target.weakness.includes('thunder')){
+            typeBonus = 1.5;
+        }
+         let damage= ((caster.intellect * 1.5)+Math.floor(Math.random()*10 +55)*typeBonus)
+         caster.mp-- 
+         target.hp -=damage
+         console.log(`${target.hp} Target HP \n ${caster.mp} Caster MP `)
+        return damage
+    },
+    ice : function(caster,target){
+        let typeBonus = 1
+        if(target.weakness.includes('ice')){
+            typeBonus = 1.5;
+        }
+         let damage= ((caster.intellect * 2)+Math.floor(Math.random()*10 +55)*typeBonus)
+         caster.mp-- 
+         target.hp -=damage
+         console.log(`${target.hp} Target HP \n ${caster.mp} Caster MP `)
+        return damage
+    }
+}
+// Attack Command
+const attack = (user,target)=>{
+
+}
+
 // player stats and current inventory 
 const player ={
     inventory: ['potion'],
-    score: 0,
-    active:true, // This is to toggle player control during transitional screens
+    score: 0 // This is to toggle player control during transitional screens
 }
 
-// Characters
+// Party Members
 const fighter = {
     name : 'fighter',
     level : 1,
@@ -86,14 +131,30 @@ const blackMage = {
     npc : false
 
 }
-// Player
+// Enemies
+const goblin = {
+    level:1,
+    hp:120,
+    mp:6,
+    strength:6,
+    agility:4,
+    intellect:2,
+    mind: 6, 
+    defense:3,
+    sprite :'',
+    spellList :['Goblin Punch'],
+    abilityList: [],
+    npc : true,
+    weakness: ['fire']
+}
+// Combat   
 const combat = () =>{
     //load in characters in sceen while 
     // $transition.show()
     // loadSet()
     // $transition.hide()
-    itemList.potion
+  
 
 }
-itemList.potion(fighter)
-itemList.potion(fighter)
+console.log(spellsMaster.fire(blackMage,goblin));
+console.log(spellsMaster.thunder(blackMage,goblin))
