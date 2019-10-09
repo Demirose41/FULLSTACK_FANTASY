@@ -65,7 +65,7 @@ const spellsMaster = {
 const attack = (user,target)=>{
 let hits = Math.floor(1+((Math.random()*user.agility)/5))
 for(let i = 0;i<hits;i++){
-    damage = Math.floor(Math.random()*(user.attack/20)+user.attack)
+    damage = Math.floor(Math.random()*(user.attack/10)+user.attack)
     target.hp -=damage
     console.log(`enemy takes ${damage} damage`)
 }   
@@ -81,14 +81,14 @@ const player ={
 const fighter = {
     name : 'fighter',
     level : 1,
-    attack : 36,
+    attack : 40,
     hp : 100,
     mp : 0,
     strength : 10,
     agility : 6,
     intellect : 4,//Int will be spell damage modifier
     defense : 10,
-    sprite : '',//Get sprite for fighter
+    sprite : 'Sprites/Warrior-Walk.gif',//Get sprite for fighter
     spellList : [],//If length is less than 1, dont show the spell option in the menu
     abilityList : [],//Melee abilities, passives 
     npc : false,
@@ -141,20 +141,25 @@ const blackMage = {
 
 }
 // Enemies
-const goblin = {
-    level:1,
-    hp:120,
-    mp:6,
-    strength:6,
-    agility:4,
-    intellect:2,
-    mind: 6, 
-    defense:3,
-    sprite :'',
-    spellList :['Goblin Punch'],
-    abilityList: [],
-    npc : true,
-    weakness: ['fire']
+class goblin {
+    constructor(name){
+        this.name = name;
+        level:1
+        attack:12
+        hp:120
+        mp:6
+        strength:5
+        agility:8
+        intellect:2
+        mind: 6
+        defense:3
+        sprite :''
+        spellList :['Goblin Punch']
+        abilityList: []
+        npc : true
+        weakness: ['fire']
+    }
+    
 }
 // Combat   
 const combat = () =>{
@@ -162,9 +167,16 @@ const combat = () =>{
     // $transition.show()
     // loadSet()
     // $transition.hide()
-  
+
 
 }
-console.log(spellsMaster.fire(blackMage,goblin));
-console.log(spellsMaster.thunder(blackMage,goblin))
-attack(monk,goblin)
+
+// $('#enemyBench').children().attr('background-image',`Sprites/Enemies/Goblin.gif`)
+const alert = (message) =>{
+     $('#messageWindow').text(message);
+     $('#messageWindow').show();
+     setTimeout(function(){$('#messageWindow').hide()},3000)
+}
+// alert('help');
+
+
