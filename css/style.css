@@ -9,7 +9,7 @@ body{
 div{
     height:50px;
     width:50px;
-    background-color: red;
+    background-color: blue;
     display:flex;
     position: fixed;
     background-position: center;
@@ -26,7 +26,7 @@ div{
     color: white;
     justify-content: center;
     align-items: center;
-    visibility: initial;    
+    display:none;           
 }
 #enemyBench{
     position: fixed;
@@ -74,6 +74,7 @@ div{
     position: relative;
     background-color: rgba(0, 0, 0, 0);
 }
+
 #menu{
     border:3px solid white;
     display: flex;
@@ -95,7 +96,13 @@ div{
     height: 28%;
     width: 20%;
     color: white;
+    flex-direction: column;
 }
+#commands > div{
+    min-width: 100%;
+    height: 25%;
+    position: relative;
+    }
 #status{
     border:3px solid white;
     display: flex;
@@ -107,6 +114,25 @@ div{
     left:20%;
     color: white;
     flex-direction: column;
+}
+#listMenu{
+    border:3px solid white;
+    display: flex;
+    background: blue;
+    position: fixed;
+    top: 70%;
+    height: 28%;
+    width: 80%;
+    left:20%;
+    color: white;
+    flex-direction: column;
+    display: grid;  
+    grid-template-columns: 25% 25% 25% 25% ;
+    grid-template-rows: 33%33%33%;   
+}
+#listMenu > span{
+    visibility: hidden;
+    
 }
 #status > div{
 min-width: 100%;
@@ -142,4 +168,7 @@ div#p3{
 }
 div#p4{
     background-image: url('../Sprites/BlackMage/BlackMage-Walk.gif');
+}
+#bgm{
+    src: url(../audio/ff3_Battle1.mp3);
 }
