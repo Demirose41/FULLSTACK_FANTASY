@@ -37,8 +37,9 @@ const itemsMaster ={
 }
 // Master Spell list
 const spellsMaster = {
+    // Black Magic
     fire : function(caster,target){
-       $('#listMenu').hide()
+       $('.listMenu').hide()
        let typeBonus = 1;
        let crit = false;
        //Makes sure the caster has MP to cast
@@ -75,7 +76,7 @@ const spellsMaster = {
        return action++
     },
     thunder : function(caster,target){
-        $('#listMenu').hide()
+        $('.listMenu').hide()
         let typeBonus = 1
         let crit = false;
         if(caster.data().mp == 0|| target.dead==true){
@@ -110,7 +111,7 @@ const spellsMaster = {
        return action++
     },
     ice : function(caster,target){
-        $('#listMenu').hide()
+        $('.listMenu').hide()
         let typeBonus = 1
         let crit = false;
         if(caster.data().mp == 0|| target.dead==true){
@@ -143,6 +144,25 @@ const spellsMaster = {
         $('#enemyBench>div').unbind('click')
         blackMage.mp--
        return action++
+    },
+    // White Magic
+    cure : function(caster,target){
+        $('.listMenu').hide()
+        caster.animate({'left':'-=3em'},500,"linear")
+        caster.css("background-image", "url(" + caster.data().castSprite + ")")
+        caster.animate({'left':'+=3em'},500,'linear')
+        setTimeout(function(){
+        caster.css("background-image", "url(" + caster.data().idleSprite + ")")
+        },1300) 
+        let healing= ((caster.data().mind * 2)+Math.floor(Math.random()*10 +40))
+        whiteMage.mp--
+        target.hp += healing
+        if(target.hp > target.hpMax){
+            target.hp = target.hpMax
+        }
+        chime(`${target.name} is healed for ${healing} HP`)
+        globalUpdate()
+    
     }
 }
 // Attack Command
@@ -277,6 +297,7 @@ const whiteMage = {
     dead:false,
     attackSprite:' Sprites/WhiteMage/WhiteMage-AttackL.gif',
     idleSprite: 'Sprites/WhiteMage/WhiteMage-Walk.gif',
+    castSprite: 'Sprites/WhiteMage/WhiteMage-cast.gif',
     updateHUD(){
         $('#p3_hp').text(`HP:${this.hp}/${this.hpMax}`)
         $('#p3_mp').text(`MP:${this.mp}/${this.mpMax}`)
@@ -284,7 +305,7 @@ const whiteMage = {
 
 }
 const blackMage = {
-    name:'blackMage',
+    name:'BlackMage',
     level : 1,
     attack: 15,
     hp : 60,
@@ -405,7 +426,7 @@ const globalUpdate = ()=>{
 // to attack
 const attackCmd=(user)=>{
     $('#attack').click(function(){
-        $('#listMenu').hide()
+        $('.listMenu').hide()
         for(let i = 1;i < 6;i++){
             if( $(`#e${i}`).data().dead== false){
                 $(`#e${i}`).click(function(){
@@ -420,7 +441,11 @@ const attackCmd=(user)=>{
 const magicCmd=(user)=>{
     $('#magic').click(function(){
         chime('Select a Spell');
-        $('#listMenu').show();
+        if(user.data().name =='BlackMage'){
+            $('#blackMenu').show();
+        }else if(user.data().name == 'WhiteMage'){
+            $('#whiteMenu').show()
+        }
         console.log(user.data().spellList)
         let workingList = user.data().spellList
         for(let i =0; i<workingList.length;i++){
@@ -436,18 +461,22 @@ const magicCmd=(user)=>{
         $('#thunderBtn').click(function(){
             setThunder(user)
         })
+        $('#cureBtn').click(function(){
+            setCure(user)
+        })
                 
             
         })
         
     }
-    // Magic spell Targeting functions
+    // // Magic spell Targeting functions
+// Black Magic
     const setFire=(caster)=>{
         for(let i = 1;i < 6;i++){
             if( $(`#e${i}`).data().dead== false){
                 $(`#e${i}`).click(function(){                
                     spellsMaster.fire(caster,$(`#e${i}`).data())
-                    console.log('We get this far')
+                    
                 })
             }
             
@@ -469,26 +498,38 @@ const magicCmd=(user)=>{
             if( $(`#e${i}`).data().dead== false){
                 $(`#e${i}`).click(function(){                
                     spellsMaster.thunder(caster,$(`#e${i}`).data())
-                    console.log('We get this far')
+                    
                 })
             }
                 
-        }
+        }chime('Select a Target')
     }
-    
+// White Magic
+    const setCure=(caster)=>{
+        for(let i = 1;i < 5;i++){
+            if( $(`#p${i}`).data().dead== false){
+                $(`#p${i}`).click(function(){                
+                    spellsMaster.cure(caster,$(`#p${i}`).data())
+                    
+                })
+            }
+                
+        }chime('Select a Target')
+    }
     
     
     // RUNNING CODE
     roundSelector(1);
     globalUpdate()
-    $('#listMenu').hide()
+    $('.listMenu').hide()
+    
 
 
-    magicCmd($('#p4'))
+    magicCmd($('#p3'))
     // $('#fireBtn').click(function(){
     //     setFire($('#p4'))
     // })
-    attackCmd($('#p4'))
+    attackCmd($('#p2'))
     // $('#magic').click(function(){    
         //     spellsMaster.fire($('#p4'),$('#e3').data())
         // })
