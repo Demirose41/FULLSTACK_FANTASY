@@ -171,5 +171,5 @@ div#p4{
     background-image: url('../Sprites/BlackMage/BlackMage-Walk.gif');
 }
 #bgm{
-    src: url(../audio/ff3_Battle1.mp3);
+    src: url('../audio/ff3_Battle1.mp3');
 }

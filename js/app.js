@@ -174,12 +174,11 @@ const spellsMaster = {
         caster.data().action++
         menuWipe()
         turn++
-            runTurn(turn)
+        runTurn(turn)
         return 
     },
     // White Magic
     cure : function(caster,target){
-        $('.listMenu').hide()
         caster.animate({'left':'-=3em'},500,"linear")
         caster.css("background-image", "url(" + caster.data().castSprite + ")")
         caster.animate({'left':'+=3em'},500,'linear')
@@ -197,6 +196,7 @@ const spellsMaster = {
         globalUpdate()
         menuWipe()
         turn++
+        console.log('7')
         runTurn(turn)
         return
     
@@ -232,6 +232,7 @@ globalUpdate();
 deathCheck(target)
 menuWipe()
 turn++
+console.log('8')
 runTurn(turn)
 return 
 }
@@ -261,6 +262,7 @@ globalUpdate();
 deathCheck(target)
 menuWipe()
 turn++
+console.log('9')
 // runTurn(turn)
 return    
 }
@@ -269,6 +271,8 @@ return
 const menuWipe = ()=>{
     $('#commands>div').unbind('click')
     $('#enemyBench>div').unbind('click')
+    $('#partyBench>div').unbind('click')
+    $('.listMenu>span').unbind('click')
 }
 const deathCheck=(target) =>{
     if(target.hp <=0){
@@ -550,8 +554,10 @@ const setThunder=(caster)=>{
 }
 // White Magic
 const setCure=(caster)=>{
+    $('.listMenu').hide()
+    $('#cureBtn').unbind('click')
     for(let i = 1;i < 5;i++){
-        if( $(`#p${i}`).data().dead== false){
+        if( $(`#p${i}`).data().hp>0){
             $(`#p${i}`).click(function(){                
                 spellsMaster.cure(caster,$(`#p${i}`).data())
                 
@@ -578,24 +584,26 @@ const runTurn=(i)=>{
         
             if(turnOrder[i].hp == 0){
                 turn++
+                console.log('10')
                 runTurn(turn); 
             }
-            if(turnOrder[i].data().mpMax != 0){
+            else if(turnOrder[i].data().mpMax != 0){
                    magicCmd(turnOrder[i])
             }
             attackCmd(turnOrder[i])            
         }
     if(i>=4&&i<turnOrder.length){
         if(turnOrder[i].data().hp == 0){
-            return turn++
-        }
-        else if(turn==turnOrder.length){
+            turn++
+            console.log('11')
+            runTurn(turn);
+        }else if(turn==turnOrder.length){
             clearInterval(enemyTimer)
             turn=0      
             runTurn(turn);
             } else{
 
-                var enemyTimer =setInterval(function(){
+                let enemyTimer =setInterval(function(){
                     let selector = Math.floor(Math.random()*4)
                     console.log(selector)
                     npcAttack(turnOrder[i],turnOrder[selector].data())
@@ -609,8 +617,9 @@ const runTurn=(i)=>{
         roundSelector(round)
         return 
     }
-    if (turn == 9){
+    if (turn == turnOrder.length){
         turn=0
+        chime('Your Turn')
         runTurn(turn)
     }
         
