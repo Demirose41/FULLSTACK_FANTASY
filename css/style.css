@@ -6,6 +6,12 @@ body{
     background-size: 50em;
     font-family: FF2,'Times New Roman', Times, serif;
 }
+#Pointer{
+    visibility: hidden;
+}
+audio{
+    position: fixed;
+}
 div{
     height:50px;
     width:50px;
@@ -170,6 +176,4 @@ div#p3{
 div#p4{
     background-image: url('../Sprites/BlackMage/BlackMage-Walk.gif');
 }
-#bgm{
-    src: url('../audio/ff3_Battle1.mp3');
-}
+

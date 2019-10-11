@@ -1,9 +1,34 @@
 // Variable storage
 let round = 1;
 let turn = 0;
+
+const checkVictory=()=>{
+    console.log('checking death')
+    if($('#e1').data().hp <= 0&&$('#e2').data().hp <= 0&&$('#e3').data().hp <= 0&&$('#e4').data().hp <= 0&&$('#e5').data().hp == 0){
+       
+        let buffer = setInterval(function() {chime('Victory!!!')
+        $('#p1').css("background-image", "url(" + fighter.victorySprite + ")")
+        $('#p2').css("background-image", "url(" + monk.victorySprite + ")")
+        $('#p3').css("background-image", "url(" + whiteMage.victorySprite + ")")
+        $('#p4').css("background-image", "url(" + blackMage.victorySprite + ")")
+        $('audio').attr('src','audio/11.mp3')
+        document.querySelector('audio').play()
+        clearInterval(buffer)
+    },2000)
+}
+}
 // Round Storage
 const Round1=()=>{
     $('body').css("background-image", "url(" + ' Sprites/Backgrounds/Forest.gif' + ")") 
+    globalUpdate()
+    for(let i = 1; i<6 ;i++){
+        let letters = [' ','A','B','C','D','E']
+        let enemy = new goblin(`Goblin${letters[i]}`,`${i}`)
+        $(`#e${i}`).data(enemy);
+    }
+}
+const Round2=()=>{
+    $('body').css("background-image", "url(" + ' Sprites/Backgrounds/Plains.gif' + ")") 
     globalUpdate()
     for(let i = 1; i<6 ;i++){
         let letters = [' ','A','B','C','D','E']
@@ -72,21 +97,23 @@ const spellsMaster = {
             chime(`${target.name} takes ${damage} critical damage!!!`)
             blackMage.mp -=1; 
             globalUpdate()
-            deathCheck(target)
+            deathCheckNpc(target)
             $('#enemyBench>div').unbind('click')
             caster.data().action++
             menuWipe()
+            checkVictory()
             turn++
             runTurn(turn)
             return 
         }else{
         chime(`${target.name} takes ${damage} damage`)
         globalUpdate()
-        deathCheck(target)
+        deathCheckNpc(target)
         }
         blackMage.mp -=1; 
         $('#enemyBench>div').unbind('click');
         menuWipe()
+        checkVictory()
         turn++
         runTurn(turn)
         return 
@@ -114,22 +141,23 @@ const spellsMaster = {
             chime(`${target.name} takes ${damage} critical damage!!!`)
             blackMage.mp -=1; 
             globalUpdate()
-            deathCheck(target)
+            deathCheckNpc(target)
             $('#enemyBench>div').unbind('click')
-            caster.data().action++
             menuWipe()
+            checkVictory()
             turn++
             runTurn(turn)
             return 
         }else{
         chime(`${target.name} takes ${damage} damage`)
         globalUpdate()
-        deathCheck(target)
+        deathCheckNpc(target)
         }
         blackMage.mp -=1;
         $('#enemyBench>div').unbind('click') 
         caster.data().action++
         menuWipe()
+        checkVictory()
         turn++
         runTurn(turn)
         return 
@@ -157,28 +185,33 @@ const spellsMaster = {
         if(crit == true){
             chime(`${target.name} takes ${damage} critical damage!!!`)
             globalUpdate()
-            deathCheck(target)
+            deathCheckNpc(target)
             $('#enemyBench>div').unbind('click')
             caster.data().action++
             menuWipe()
+            checkVictory()
             turn++
             runTurn(turn)
             return 
         }else{
         chime(`${target.name} takes ${damage} damage`)
         globalUpdate()
-        deathCheck(target)
+        deathCheckNpc(target)
         }
         $('#enemyBench>div').unbind('click')
         blackMage.mp--
         caster.data().action++
         menuWipe()
+        checkVictory()
         turn++
         runTurn(turn)
         return 
     },
     // White Magic
     cure : function(caster,target){
+        if(caster.data().mp <= 0|| target.dead==true){
+            return 
+         }
         caster.animate({'left':'-=3em'},500,"linear")
         caster.css("background-image", "url(" + caster.data().castSprite + ")")
         caster.animate({'left':'+=3em'},500,'linear')
@@ -192,14 +225,62 @@ const spellsMaster = {
             target.hp = target.hpMax
         }
         chime(`${target.name} is healed for ${healing} HP`)
-        healthUpdate ()
+        healthUpdate()
         globalUpdate()
         menuWipe()
+        checkVictory()
         turn++
         console.log('7')
         runTurn(turn)
         return
-    
+    },
+    holy : function(caster,target){
+        if(caster.data().mp <= 0|| target.dead==true){
+            return 
+         }
+        $('.listMenu').hide()
+        let typeBonus = 1
+        let crit = false;
+        if(caster.data().mp == 0|| target.dead==true){
+           return 
+        }
+        if(target.weakness.includes('holy')){
+            typeBonus = 1.5;
+            crit = true
+        }
+        caster.animate({'left':'-=3em'},500,"linear")
+        caster.css("background-image", "url(" + caster.data().castSprite + ")")
+        caster.animate({'left':'+=3em'},500,'linear')
+        setTimeout(function(){
+        caster.css("background-image", "url(" + caster.data().idleSprite + ")")
+        },1300) 
+        let damage= ((caster.data().intellect * 2)+Math.floor(Math.random()*10 +55)*typeBonus)
+        whiteMage.mp-=2
+        target.hp -=damage
+        if(crit == true){
+            chime(`${target.name} takes ${damage} critical damage!!!`)
+            globalUpdate()
+            deathCheckNpc(target)
+            $('#enemyBench>div').unbind('click')
+            caster.data().action++
+            menuWipe()
+            checkVictory()
+            turn++
+            runTurn(turn)
+            return 
+        }else{
+        chime(`${target.name} takes ${damage} damage`)
+        globalUpdate()
+        deathCheckNpc(target)
+        }
+        $('#enemyBench>div').unbind('click')
+        whiteMage.mp -=2
+        caster.data().action++
+        menuWipe()
+        checkVictory()
+        turn++
+        runTurn(turn)
+        return 
     }
 }
 // Attack Command
@@ -229,7 +310,7 @@ setTimeout(function(){
 // user.css("background-image", "url(" + ' Sprites/Warrior/Warrior-Walk.gif' + ")")
 
 globalUpdate();
-deathCheck(target)
+deathCheckNpc(target)
 menuWipe()
 turn++
 console.log('8')
@@ -259,35 +340,22 @@ chime(`${target.name} takes ${total} damage`)
 // user.css("background-image", "url(" + ' Sprites/Warrior/Warrior-Walk.gif' + ")")
 healthUpdate ()
 globalUpdate();
-deathCheck(target)
+deathCheckPc(target)
 menuWipe()
 turn++
 console.log('9')
 // runTurn(turn)
 return    
 }
-
-
 const menuWipe = ()=>{
     $('#commands>div').unbind('click')
     $('#enemyBench>div').unbind('click')
     $('#partyBench>div').unbind('click')
     $('.listMenu>span').unbind('click')
 }
-const deathCheck=(target) =>{
-    if(target.hp <=0){
-        target.dead=true
-        if(target.npc == 'Fighter'){
-         $('#p1').css("background-image", "url(" + ' Sprites/Warrior/Warrior-Dead.gif' + ")");
-        }
-        if(target.npc == 'Monk'){
-         $('#p2').css("background-image", "url(" + ' Sprites/Monk/Monk-Dead.gif' + ")");
-        }if(target.npc == 'WhiteMage'){
-         $('#p3').css("background-image", "url(" + ' Sprites/WhiteMage/WhiteMage-Dead.gif' + ")");
-        }if(target.npc == 'BlackMage'){
-         $('#p4').css("background-image", "url(" + ' Sprites/BlackMage/BlackMage-Dead.gif' + ")");
-        }
-        else if(target.npc == true){
+const deathCheckNpc=(target) =>{
+   if(target.hp <=0){
+         if(target.npc == true){
          if(target.order==1){
              $('#e1').hide()
          }else if(target.order==2){
@@ -302,6 +370,11 @@ const deathCheck=(target) =>{
         }
     }
 }
+const deathCheckPc=(target)=>{
+    if(target.hp <= 0){
+        target.css("background-image", "url(" + target.data().deathSprite + ")")
+}
+}
 // player stats and current inventory 
 const player ={
     inventory: ['potion'],
@@ -313,8 +386,8 @@ const fighter = {
     name : 'Fighter',
     level : 1,
     attack : 40,
-    hp : 100,
-    hpMax:100,
+    hp : 140,
+    hpMax:140,
     mp : 0,
     mpMax:0,
     strength : 10,
@@ -328,6 +401,8 @@ const fighter = {
     action:0,
     attackSprite:' Sprites/Warrior/Warrior-AttackL.gif',
     idleSprite: 'Sprites/Warrior/Warrior-Walk.gif',
+    deathSprite: 'Sprites/Warrior/Warrior-Dead.gif',
+    victorySprite: 'Sprites/Warrior/Warrior-Victory.gif',
     updateHUD(){
         $('#p1_hp').text(`HP:${this.hp}/${this.hpMax}`)
         $('#p1_mp').text(`MP:${this.mp}/${this.mpMax}`)
@@ -343,7 +418,7 @@ const monk = {
     mp : 0,
     mpMax:0,
     strength : 8,
-    agility : 9,
+    agility : 14,
     intellect : 4,//Int will be spell damage modifier
     mind : 6,
     defense : 7,
@@ -354,6 +429,8 @@ const monk = {
     dead:false,
     attackSprite:' Sprites/Monk/Monk-AttackR.gif',
     idleSprite: 'Sprites/Monk/Monk-Walk.gif',
+    deathSprite: 'Sprites/Monk/Monk-Dead.gif',
+    victorySprite:'Sprites/Monk/Monk-Victory.gif',
     updateHUD(){
         $('#p2_hp').text(`HP:${this.hp}/${this.hpMax}`)
         $('#p2_mp').text(`MP:${this.mp}/${this.mpMax}`)
@@ -363,8 +440,8 @@ const whiteMage = {
     name:'WhiteMage',
     level : 1,
     attack:12,
-    hp : 60,
-    hpMax:60,
+    hp : 80,
+    hpMax:80,
     mp : 10,
     mpMax:10,
     strength : 4,
@@ -380,6 +457,8 @@ const whiteMage = {
     attackSprite:' Sprites/WhiteMage/WhiteMage-AttackL.gif',
     idleSprite: 'Sprites/WhiteMage/WhiteMage-Walk.gif',
     castSprite: 'Sprites/WhiteMage/WhiteMage-cast.gif',
+    deathSprite: 'Sprites/WhiteMage/WhiteMage-Dead.gif',
+    victorySprite: 'Sprites/WhiteMage/WhiteMage-Victory.gif',
     updateHUD(){
         $('#p3_hp').text(`HP:${this.hp}/${this.hpMax}`)
         $('#p3_mp').text(`MP:${this.mp}/${this.mpMax}`)
@@ -390,8 +469,8 @@ const blackMage = {
     name:'BlackMage',
     level : 1,
     attack: 15,
-    hp : 60,
-    hpMax:60,
+    hp : 80,
+    hpMax:80,
     mp : 10,
     mpMax:10,
     strength : 4,
@@ -407,6 +486,8 @@ const blackMage = {
     attackSprite:' Sprites/BlackMage/BlackMage-AttackL.gif',
     idleSprite: 'Sprites/BlackMage/BlackMage-Walk.gif',
     castSprite: 'Sprites/BlackMage/BlackMage-cast.gif',
+    deathSprite: 'Sprites/BlackMage/BlackMage-Dead.gif',
+    victorySprite: 'Sprites/BlackMage/BlackMage-Victory.gif',
     updateHUD(){
         $('#p4_hp').text(`HP:${this.hp}/${this.hpMax}`)
         $('#p4_mp').text(`MP:${this.mp}/${this.mpMax}`)
@@ -420,7 +501,7 @@ class goblin {
         this.order=order;
         this.level =1
         this.attack=12
-        this.hp=120
+        this.hp=100
         this.mp=6
         this.strength=5
         this.agility=8
@@ -448,7 +529,7 @@ const chime = function(message) {
     $('#messageWindow').hide(); 
     $('#messageWindow').show();
     $('#messageWindow').text(message);
-     setTimeout(function(){$('#messageWindow').hide()},6000 )
+
 }
 const globalUpdate = ()=>{
     $('#p1').data(fighter)
@@ -473,26 +554,35 @@ const healthUpdate =()=>{
     // attackCmd will be one of the possible actions the user can take and will allow them to choose any enemy that is still alive 
     // to attack
     const attackCmd=(user,order)=>{
+        checkVictory()
         $('#attack').click(function(){
             $('.listMenu').hide()
+            $('#attack').text('Attack')
             for(let i = 1;i < 6;i++){
                 if( $(`#e${i}`).data().dead== false){
                     $(`#e${i}`).click(function(){
                     attack(user,$(`#e${i}`).data(),order)
                 })
-            }
+            }   
         }
+        $('#commands>div').unbind('click')
         chime('Select a Target');
+        document.querySelector('audio').play()
+        document.querySelector('audio').loop='true'
     })
 }
 // magicCommand
 const magicCmd=(user)=>{
+    checkVictory()
+    $('#magic').text('Magic')
     $('#magic').click(function(){
         chime('Select a Spell');
         if(user.data().name =='BlackMage'){
             $('#blackMenu').show();
+            $('#commands').unbind('click')
         }else if(user.data().name == 'WhiteMage'){
             $('#whiteMenu').show()
+            $('#commands>div').unbind('click')
         }
         console.log(user.data().spellList)
         let workingList = user.data().spellList
@@ -511,6 +601,9 @@ const magicCmd=(user)=>{
         })
         $('#cureBtn').click(function(){
             setCure(user)
+        })
+        $('#holyBtn').click(function(){
+            setHoly(user)
         })
         
         
@@ -566,78 +659,103 @@ const setCure=(caster)=>{
         
     }chime('Select a Target')
 }
-
-
-// RUNNING CODE
-roundSelector(1);
-globalUpdate()
-$('.listMenu').hide()
-
-
-
-// magicCmd($('#p3'))
-// attackCmd($('#p2'))
-
-const runTurn=(i)=>{
-    
-    if(i<4){
-        
-            if(turnOrder[i].hp == 0){
-                turn++
-                console.log('10')
-                runTurn(turn); 
-            }
-            else if(turnOrder[i].data().mpMax != 0){
-                   magicCmd(turnOrder[i])
-            }
-            attackCmd(turnOrder[i])            
+const setHoly=(caster)=>{
+    for(let i = 1;i < 6;i++){
+        if( $(`#e${i}`).data().dead== false){
+            $(`#e${i}`).click(function(){                
+                spellsMaster.holy(caster,$(`#e${i}`).data())
+                
+            })
         }
+        
+    }chime('Select a Target')
+}
+const runTurn=(i)=>{
+   checkVictory() 
+    if(i<4){
+         
+        if(turnOrder[i].hp == 0){
+            turn++
+            console.log('10')
+            runTurn(turn); 
+        }
+        else if(turnOrder[i].data().mpMax != 0){
+            magicCmd(turnOrder[i])
+        }
+        attackCmd(turnOrder[i])            
+    }
     if(i>=4&&i<turnOrder.length){
-        if(turnOrder[i].data().hp == 0){
+        document.querySelector('audio').play()
+        if(turnOrder[i].data().hp <= 0){
             turn++
             console.log('11')
             runTurn(turn);
-        }else if(turn==turnOrder.length){
-            clearInterval(enemyTimer)
-            turn=0      
-            runTurn(turn);
-            } else{
-
-                let enemyTimer =setInterval(function(){
-                    let selector = Math.floor(Math.random()*4)
-                    console.log(selector)
+            return
+        }else
+        if(turn==turnOrder.length){
+            if(turnOrder[4].data().hp == 0&&turnOrder[5].data().hp == 0&&turnOrder[6].data().hp == 0&&turnOrder[7].data().hp == 0&&turnOrder[8].data().hp == 0){
+                round++
+                chime('Victory!!!')
+                return 
+            }else{
+                $('#attack').text('Attack')
+                $('#magic').text('')
+                turn=0
+                chime('Your Turn')
+                runTurn(turn)
+            }
+        } else{
+            $('#attack').text('Enemy')
+            $('#magic').text('Turn')
+            let enemyTimer =setInterval(function(){
+                let selector = Math.floor(Math.random()*4)
+                console.log(selector)
+                if(turnOrder[i].hp != 0){
                     npcAttack(turnOrder[i],turnOrder[selector].data())
                     clearInterval(enemyTimer)
                     runTurn(turn)
-                },3000)
-            }
+                }else{
+                    clearInterval(enemyTimer)
+                    turn++
+                    runTurn(turn)
+                    
+                    
+                }
+            },2500)
         }
-    if(turnOrder[4].data().death&&turnOrder[5].data().death&&turnOrder[6].data().death&&turnOrder[7].data().death&&turnOrder[8].data().death){
-        round++
-        roundSelector(round)
-        return 
     }
+   
     if (turn == turnOrder.length){
-        turn=0
-        chime('Your Turn')
-        runTurn(turn)
+        if(turnOrder[4].hp == 0&&turnOrder[5].hp == 0&&turnOrder[6].hp == 0&&turnOrder[7].hp == 0&&turnOrder[8].hp == 0){
+            round++
+            chime('Victory!!!')
+            roundSelector(round)
+            return 
+        }else{
+            $('#attack').text('Attack')
+            $('#magic').text('')
+            turn=0
+            chime('Your Turn')
+            runTurn(turn)
+        }
     }
-        
+    
 }
 
 // Add Round enemy selection here
-    // Round 1 
-    let turnOrder = []
-    for(let i =0;i<4;i++){
+// Round 1 
+// RUNNING CODE
+
+roundSelector(1);
+globalUpdate()
+$('.listMenu').hide()
+let turnOrder = []
+for(let i =0;i<4;i++){
     turnOrder[i] = $(`#p${i+1}`)
-    }    
-    for(let i = 0;i<5;i++){
+}    
+for(let i = 0;i<5;i++){
     turnOrder.push($(`#e${i+1}`))
-    }
-    console.log(turnOrder.length)
-    
-    // $('#e1').click(function (){
-    //     npcAttack($('#e1')  ,$('#p1').data());
-    // })
-    runTurn(turn)
+}
+runTurn(turn)
+
 

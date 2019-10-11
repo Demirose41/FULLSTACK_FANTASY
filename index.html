@@ -6,12 +6,10 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="css/style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <audio id='bgm' preload="auto" loop autoplay>
-        <source src="audio/ff3_Battle1.mp3" type="audio/mpeg">
-    </audio>
     <title>Document</title>
 </head>
 <body>
+    <audio src="audio/ff3_Battle2.mp3" controls style="visibility: hidden"  preload="metadatapoi"></audio>
     <div id="enemyBench">
             <div id="e1"></div>
             <div id="e2"></div>
@@ -27,9 +25,9 @@
     </div>
     <div id="menu">
         <div id="commands">
-            <div id="attack">Attack</div>
-            <div id="magic">Magic</div>
-            <div id='items'>Items</div>
+            <div id="attack">Start</div>
+            <div id="magic"></div>
+            <div id='items'></div>
         </div>
         <div id="status">
             <div id="p1_status">
@@ -57,12 +55,13 @@
             
         </div>
         <div id="blackMenu" class="listMenu">
-            <span id='fireBtn'><img src="Sprites/MenuElements/BlackMagic.gif">Fire</span>
-            <span id="iceBtn"><img src="Sprites/MenuElements/BlackMagic.gif">Ice</span>
-            <span id="thunderBtn"><img src="Sprites/MenuElements/BlackMagic.gif">Thunder</span>
+            <span id='fireBtn'><img src="Sprites/MenuElements/BlackMagic.gif">Fire   :1MP</span>
+            <span id="iceBtn"><img src="Sprites/MenuElements/BlackMagic.gif">Ice    :1MP</span>
+            <span id="thunderBtn"><img src="Sprites/MenuElements/BlackMagic.gif">Thunder :1MP</span>
         </div>
         <div id="whiteMenu" class='listMenu'>
-                <span id='cureBtn'><img src="Sprites/MenuElements/WhiteMagic.gif">Cure</span>
+                <span id='cureBtn'><img src="Sprites/MenuElements/WhiteMagic.gif">Cure :1MP</span>
+                <span id="holyBtn"><img src="Sprites/MenuElements/WhiteMagic.gif">Holy  :2MP</span>
             </div>
     </div>
     <div id="Pointer"></div>
