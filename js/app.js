@@ -1,3 +1,6 @@
+// Variable storage
+let round = 1;
+let turn = 0;
 // Round Storage
 const Round1=()=>{
     $('body').css("background-image", "url(" + ' Sprites/Backgrounds/Forest.gif' + ")") 
@@ -7,6 +10,12 @@ const Round1=()=>{
         let enemy = new goblin(`Goblin${letters[i]}`,`${i}`)
         $(`#e${i}`).data(enemy);
     }
+}
+// Round Loader.. Will load in the enemies designated for each specific round
+const roundSelector=(num)=>{
+ if(num=1){
+     Round1();
+ }
 }
 // Master Lists of items 
 const itemsMaster ={
@@ -65,7 +74,11 @@ const spellsMaster = {
             globalUpdate()
             deathCheck(target)
             $('#enemyBench>div').unbind('click')
-            return action++
+            caster.data().action++
+            menuWipe()
+            turn++
+            runTurn(turn)
+            return 
         }else{
         chime(`${target.name} takes ${damage} damage`)
         globalUpdate()
@@ -73,7 +86,10 @@ const spellsMaster = {
         }
         blackMage.mp -=1; 
         $('#enemyBench>div').unbind('click');
-       return action++
+        menuWipe()
+        turn++
+        runTurn(turn)
+        return 
     },
     thunder : function(caster,target){
         $('.listMenu').hide()
@@ -100,7 +116,11 @@ const spellsMaster = {
             globalUpdate()
             deathCheck(target)
             $('#enemyBench>div').unbind('click')
-            return action++
+            caster.data().action++
+            menuWipe()
+            turn++
+            runTurn(turn)
+            return 
         }else{
         chime(`${target.name} takes ${damage} damage`)
         globalUpdate()
@@ -108,7 +128,11 @@ const spellsMaster = {
         }
         blackMage.mp -=1;
         $('#enemyBench>div').unbind('click') 
-       return action++
+        caster.data().action++
+        menuWipe()
+        turn++
+        runTurn(turn)
+        return 
     },
     ice : function(caster,target){
         $('.listMenu').hide()
@@ -135,7 +159,11 @@ const spellsMaster = {
             globalUpdate()
             deathCheck(target)
             $('#enemyBench>div').unbind('click')
-            return action++
+            caster.data().action++
+            menuWipe()
+            turn++
+            runTurn(turn)
+            return 
         }else{
         chime(`${target.name} takes ${damage} damage`)
         globalUpdate()
@@ -143,7 +171,11 @@ const spellsMaster = {
         }
         $('#enemyBench>div').unbind('click')
         blackMage.mp--
-       return action++
+        caster.data().action++
+        menuWipe()
+        turn++
+            runTurn(turn)
+        return 
     },
     // White Magic
     cure : function(caster,target){
@@ -161,7 +193,12 @@ const spellsMaster = {
             target.hp = target.hpMax
         }
         chime(`${target.name} is healed for ${healing} HP`)
+        healthUpdate ()
         globalUpdate()
+        menuWipe()
+        turn++
+        runTurn(turn)
+        return
     
     }
 }
@@ -193,18 +230,58 @@ setTimeout(function(){
 
 globalUpdate();
 deathCheck(target)
-$('#enemyBench>div').unbind('click')
-return action++
+menuWipe()
+turn++
+runTurn(turn)
+return 
+}
+const npcAttack = (user,target)=>{
+    
+    if(target.hp == 0){
+        return
+    }
+let hits = Math.floor(1+((Math.random()*user.data().agility)/5))
+console.log(`Hits : ${hits}`)
+console.log(`agi ${user.data().agility}`)
+let total=0;
+if(target.hp>0)
+{for(let i = 0;i<hits;i++){
+    damage = Math.floor(Math.random()*(user.data().attack/10)+user.data().attack)
+    total +=damage
+} } 
+console.log(`total : ${total}`)
+target.hp -=total
+if(target.hp < 0){
+    target.hp = 0
+}
+chime(`${target.name} takes ${total} damage`)
+// user.css("background-image", "url(" + ' Sprites/Warrior/Warrior-Walk.gif' + ")")
+healthUpdate ()
+globalUpdate();
+deathCheck(target)
+menuWipe()
+turn++
+// runTurn(turn)
+return    
 }
 
-// Makes all enemies targetable
 
+const menuWipe = ()=>{
+    $('#commands>div').unbind('click')
+    $('#enemyBench>div').unbind('click')
+}
 const deathCheck=(target) =>{
     if(target.hp <=0){
         target.dead=true
-        if(target.name == 'fighter'){
+        if(target.npc == 'Fighter'){
          $('#p1').css("background-image", "url(" + ' Sprites/Warrior/Warrior-Dead.gif' + ")");
-        console.log('fighter dead')
+        }
+        if(target.npc == 'Monk'){
+         $('#p2').css("background-image", "url(" + ' Sprites/Monk/Monk-Dead.gif' + ")");
+        }if(target.npc == 'WhiteMage'){
+         $('#p3').css("background-image", "url(" + ' Sprites/WhiteMage/WhiteMage-Dead.gif' + ")");
+        }if(target.npc == 'BlackMage'){
+         $('#p4').css("background-image", "url(" + ' Sprites/BlackMage/BlackMage-Dead.gif' + ")");
         }
         else if(target.npc == true){
          if(target.order==1){
@@ -229,7 +306,7 @@ const player ={
 
 // Party Members
 const fighter = {
-    name : 'fighter',
+    name : 'Fighter',
     level : 1,
     attack : 40,
     hp : 100,
@@ -244,6 +321,7 @@ const fighter = {
     abilityList : [],//Melee abilities, passives 
     npc : false,
     dead:false,
+    action:0,
     attackSprite:' Sprites/Warrior/Warrior-AttackL.gif',
     idleSprite: 'Sprites/Warrior/Warrior-Walk.gif',
     updateHUD(){
@@ -352,12 +430,7 @@ class goblin {
         this.weakness = ['fire']
         this.dead = false
     }
-    randomAttack(target){
-        let selector = Math.floor(Math.random()*2)
-        if(selector = 1){
-            attack(this.goblin,target)
-     }
-    }
+
 
     
 }
@@ -373,11 +446,6 @@ const chime = function(message) {
     $('#messageWindow').text(message);
      setTimeout(function(){$('#messageWindow').hide()},6000 )
 }
-const roundSelector=(num)=>{
- if(num=1){
-     Round1();
- }
-}
 const globalUpdate = ()=>{
     $('#p1').data(fighter)
     fighter.updateHUD();
@@ -388,49 +456,25 @@ const globalUpdate = ()=>{
     $('#p4').data(blackMage)
     blackMage.updateHUD();
 }
-// for(let i = 0; i <11;i++){
+const healthUpdate =()=>{
+    fighter.hp=$(`#p1`).data().hp
+    monk.hp=$(`#p2`).data().hp
+    whiteMage.hp=$(`#p3`).data().hp
+    blackMage.hp=$(`#p4`).data().hp
+}
 
-//     let round = 1;
-//     roundSelector(round)
-//     // Round
-//     globalUpdate();
-//     while(($('#p1').hp && $('#p2').hp && $('#p3').hp&&$('#p4').hp)||$('#e1').hp &&$('#e2').hp&&$('#e3').hp&&$('#e4').hp&&$('#e5').hp != 0){
-//         gameOver();
-//     }
-//     let action = 0;
-//     while(action=0){
-//         console.log('hola')
-//         $('#attack').click(function(){
-//             // attack(fighter,fighter);
-//             attack(fighter,$('#e1').data())
-//         })
-//         $('#magic').click(function(){    
-//             spellsMaster.fire(blackMage,$('#e3').data())
-//         })
-//     }
-        
-// }
-    // Add Round enemy selection here
-// Round 1 
+
     
-
-// let GoblinA = new goblin(`Goblin1`,1);
-// $('#e1').data(GoblinA);
-// let GoblinB = new goblin(`Goblin1`,2)
-// let GoblinC = new goblin(`Goblin1`,3)
-// let GoblinD = new goblin(`Goblin1`,4)
-// let GoblinE = new goblin(`Goblin1`,5)
-// attack(fighter,gob   lin)
-// user will be whoever's turn it is 
-// attackCmd will be one of the possible actions the user can take and will allow them to choose any enemy that is still alive 
-// to attack
-const attackCmd=(user)=>{
-    $('#attack').click(function(){
-        $('.listMenu').hide()
-        for(let i = 1;i < 6;i++){
-            if( $(`#e${i}`).data().dead== false){
-                $(`#e${i}`).click(function(){
-                    attack(user,$(`#e${i}`).data())
+    // user will be whomever's turn it is 
+    // attackCmd will be one of the possible actions the user can take and will allow them to choose any enemy that is still alive 
+    // to attack
+    const attackCmd=(user,order)=>{
+        $('#attack').click(function(){
+            $('.listMenu').hide()
+            for(let i = 1;i < 6;i++){
+                if( $(`#e${i}`).data().dead== false){
+                    $(`#e${i}`).click(function(){
+                    attack(user,$(`#e${i}`).data(),order)
                 })
             }
         }
@@ -451,7 +495,7 @@ const magicCmd=(user)=>{
         for(let i =0; i<workingList.length;i++){
             $(`#${workingList[i]}Btn`).css('visibility','visible')
         }
-            
+        
         $('#fireBtn').click(function(){
             setFire(user)
         })
@@ -464,73 +508,127 @@ const magicCmd=(user)=>{
         $('#cureBtn').click(function(){
             setCure(user)
         })
-                
-            
-        })
         
-    }
-    // // Magic spell Targeting functions
+        
+    })
+    
+}
+// // Magic spell Targeting functions
 // Black Magic
-    const setFire=(caster)=>{
-        for(let i = 1;i < 6;i++){
-            if( $(`#e${i}`).data().dead== false){
-                $(`#e${i}`).click(function(){                
-                    spellsMaster.fire(caster,$(`#e${i}`).data())
-                    
-                })
-            }
-            
-        }chime('Select a Target')
-    }
-    const setIce=(caster)=>{
-        for(let i = 1;i < 6;i++){
-            if( $(`#e${i}`).data().dead== false){
-                $(`#e${i}`).click(function(){                
-                    spellsMaster.ice(caster,$(`#e${i}`).data())
-                    console.log('We get this far')
-                })
-            }
-            
-        }chime('Select a Target')
-    }
-    const setThunder=(caster)=>{
-        for(let i = 1;i < 6;i++){
-            if( $(`#e${i}`).data().dead== false){
-                $(`#e${i}`).click(function(){                
-                    spellsMaster.thunder(caster,$(`#e${i}`).data())
-                    
-                })
-            }
+const setFire=(caster)=>{
+    for(let i = 1;i < 6;i++){
+        if( $(`#e${i}`).data().dead== false){
+            $(`#e${i}`).click(function(){                
+                spellsMaster.fire(caster,$(`#e${i}`).data())
                 
-        }chime('Select a Target')
-    }
+            })
+        }
+        
+    }chime('Select a Target')
+}
+const setIce=(caster)=>{
+    for(let i = 1;i < 6;i++){
+        if( $(`#e${i}`).data().dead== false){
+            $(`#e${i}`).click(function(){                
+                spellsMaster.ice(caster,$(`#e${i}`).data())
+                console.log('We get this far')
+            })
+        }
+        
+    }chime('Select a Target')
+}
+const setThunder=(caster)=>{
+    for(let i = 1;i < 6;i++){
+        if( $(`#e${i}`).data().dead== false){
+            $(`#e${i}`).click(function(){                
+                spellsMaster.thunder(caster,$(`#e${i}`).data())
+                
+            })
+        }
+        
+    }chime('Select a Target')
+}
 // White Magic
-    const setCure=(caster)=>{
-        for(let i = 1;i < 5;i++){
-            if( $(`#p${i}`).data().dead== false){
-                $(`#p${i}`).click(function(){                
-                    spellsMaster.cure(caster,$(`#p${i}`).data())
-                    
-                })
-            }
+const setCure=(caster)=>{
+    for(let i = 1;i < 5;i++){
+        if( $(`#p${i}`).data().dead== false){
+            $(`#p${i}`).click(function(){                
+                spellsMaster.cure(caster,$(`#p${i}`).data())
                 
-        }chime('Select a Target')
+            })
+        }
+        
+    }chime('Select a Target')
+}
+
+
+// RUNNING CODE
+roundSelector(1);
+globalUpdate()
+$('.listMenu').hide()
+
+
+
+// magicCmd($('#p3'))
+// attackCmd($('#p2'))
+
+const runTurn=(i)=>{
+    
+    if(i<4){
+        
+            if(turnOrder[i].hp == 0){
+                turn++
+                runTurn(turn); 
+            }
+            if(turnOrder[i].data().mpMax != 0){
+                   magicCmd(turnOrder[i])
+            }
+            attackCmd(turnOrder[i])            
+        }
+    if(i>=4&&i<turnOrder.length){
+        if(turnOrder[i].data().hp == 0){
+            return turn++
+        }
+        else if(turn==turnOrder.length){
+            clearInterval(enemyTimer)
+            turn=0      
+            runTurn(turn);
+            } else{
+
+                var enemyTimer =setInterval(function(){
+                    let selector = Math.floor(Math.random()*4)
+                    console.log(selector)
+                    npcAttack(turnOrder[i],turnOrder[selector].data())
+                    clearInterval(enemyTimer)
+                    runTurn(turn)
+                },3000)
+            }
+        }
+    if(turnOrder[4].data().death&&turnOrder[5].data().death&&turnOrder[6].data().death&&turnOrder[7].data().death&&turnOrder[8].data().death){
+        round++
+        roundSelector(round)
+        return 
     }
-    
-    
-    // RUNNING CODE
-    roundSelector(1);
-    globalUpdate()
-    $('.listMenu').hide()
-    
+    if (turn == 9){
+        turn=0
+        runTurn(turn)
+    }
+        
+}
 
-
-    magicCmd($('#p3'))
-    // $('#fireBtn').click(function(){
-    //     setFire($('#p4'))
+// Add Round enemy selection here
+    // Round 1 
+    let turnOrder = []
+    for(let i =0;i<4;i++){
+    turnOrder[i] = $(`#p${i+1}`)
+    }    
+    for(let i = 0;i<5;i++){
+    turnOrder.push($(`#e${i+1}`))
+    }
+    console.log(turnOrder.length)
+    
+    // $('#e1').click(function (){
+    //     npcAttack($('#e1')  ,$('#p1').data());
     // })
-    attackCmd($('#p2'))
-    // $('#magic').click(function(){    
-        //     spellsMaster.fire($('#p4'),$('#e3').data())
-        // })
-        // attackCmd($('#p1'));
+    runTurn(turn)
+
