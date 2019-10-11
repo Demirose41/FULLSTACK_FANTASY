@@ -1,5 +1,5 @@
 # FINAL FANTASY BATTLE
-Screen Shot 2019-10-10 at 11.10.58 AM
+https://demirose41.github.io/project1/ - PLAY NOW!!!
 !!!About!!!
 This is a game designed to emulate the early final fantasy battle system with HTMl.
 WHen the game starts, the round begins and you are selecting command. From there the procedure will be.
