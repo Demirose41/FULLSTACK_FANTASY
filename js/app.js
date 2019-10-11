@@ -4,7 +4,7 @@ let turn = 0;
 
 const checkVictory=()=>{
     console.log('checking death')
-    if($('#e1').data().hp <= 0&&$('#e2').data().hp <= 0&&$('#e3').data().hp <= 0&&$('#e4').data().hp <= 0&&$('#e5').data().hp == 0){
+    if($('#e1').data().hp <= 0&&$('#e2').data().hp <= 0&&$('#e3').data().hp <= 0&&$('#e4').data().hp <= 0&&$('#e5').data().hp <= 0){
        
         let buffer = setInterval(function() {chime('Victory!!!')
         $('#p1').css("background-image", "url(" + fighter.victorySprite + ")")
@@ -337,10 +337,12 @@ if(target.hp < 0){
     target.hp = 0
 }
 chime(`${target.name} takes ${total} damage`)
+user.animate({'left':'+=3em'},500,"linear")
+user.animate({'left':'-=3em'},500,"linear")
 // user.css("background-image", "url(" + ' Sprites/Warrior/Warrior-Walk.gif' + ")")
 healthUpdate ()
 globalUpdate();
-deathCheckPc(target)
+deathCheckPc()
 menuWipe()
 turn++
 console.log('9')
@@ -370,10 +372,34 @@ const deathCheckNpc=(target) =>{
         }
     }
 }
-const deathCheckPc=(target)=>{
-    if(target.hp <= 0){
-        target.css("background-image", "url(" + target.data().deathSprite + ")")
+const deathCheckPc=()=>{
+    if($('#p1').data().hp <=0){
+        $('#p1').css("background-image", "url(" + fighter.deathSprite + ")")
+    }
+    if($('#p2').data().hp <=0){
+    $('#p2').css("background-image", "url(" + monk.deathSprite + ")")
+    }
+    if($('#p3').data().hp <=0){
+    $('#p3').css("background-image", "url(" + whiteMage.deathSprite + ")")
+    }
+    if($('#p4').data().hp <=0){
+    $('#p4').css("background-image", "url(" + blackMage.deathSprite + ")")
+    }
 }
+const gameOver = () =>{
+    if($('#p1').data().hp <= 0&&$('#p2').data().hp <= 0&&$('#p3').data().hp <= 0&&$('#p4').data().hp <= 0&&$('#p5').data().hp <= 0){ 
+    let buffer = setInterval(function() {chime('Game Over')
+    $('#p1').css("background-image", "url(" + fighter.victorySprite + ")")
+    $('#p2').css("background-image", "url(" + monk.victorySprite + ")")
+    $('#p3').css("background-image", "url(" + whiteMage.victorySprite + ")")
+    $('#p4').css("background-image", "url(" + blackMage.victorySprite + ")")
+    $('audio').attr('src','audio/gameOver.mp3')
+    document.querySelector('audio').play()
+    clearInterval(buffer)
+},2000)
+
+    }
+
 }
 // player stats and current inventory 
 const player ={
@@ -500,8 +526,8 @@ class goblin {
         this.name = name;
         this.order=order;
         this.level =1
-        this.attack=12
-        this.hp=100
+        this.attack=15
+        this.hp=120
         this.mp=6
         this.strength=5
         this.agility=8
@@ -521,9 +547,7 @@ class goblin {
 }
 
 
-gameOver=()=>{
-    alert('Game Over')
-}
+
 // $('#enemyBench').children().attr('background-image',`Sprites/Enemies/Goblin.gif`)
 const chime = function(message) {
     $('#messageWindow').hide(); 
@@ -628,7 +652,6 @@ const setIce=(caster)=>{
         if( $(`#e${i}`).data().dead== false){
             $(`#e${i}`).click(function(){                
                 spellsMaster.ice(caster,$(`#e${i}`).data())
-                console.log('We get this far')
             })
         }
         
@@ -672,6 +695,7 @@ const setHoly=(caster)=>{
 }
 const runTurn=(i)=>{
    checkVictory() 
+   deathCheckPc()
     if(i<4){
          
         if(turnOrder[i].hp == 0){
