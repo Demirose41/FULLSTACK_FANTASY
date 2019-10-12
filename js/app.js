@@ -11,8 +11,8 @@ const checkVictory=()=>{
         $('#p2').css("background-image", "url(" + monk.victorySprite + ")")
         $('#p3').css("background-image", "url(" + whiteMage.victorySprite + ")")
         $('#p4').css("background-image", "url(" + blackMage.victorySprite + ")")
-        $('audio').attr('src','audio/11.mp3')
-        document.querySelector('audio').play()
+        $('#bgm').attr('src','audio/11.mp3')
+        document.querySelector('#bgm').play()
         clearInterval(buffer)
     },2000)
 }
@@ -355,12 +355,31 @@ if(target.hp < 0){
 }
 chime(`${target.name} takes ${total} damage`)
 user.animate({'left':'-=3em'},500,"linear")
-user.css("background-image", "url(" + user.data().attackSprite + ")")
-user.animate({'left':'+=3em'},500,'linear')
+
+setTimeout(function(){
+    user.css("background-image", "url(" + user.data().attackSprite + ")")
+    $('#sfx').attr('src',`${user.data().hitSFX}`)
+    document.querySelector('#sfx').play()},500)
+setTimeout(function(){
+    user.animate({'left':'+=3em'},500,'linear')
+},1600)
 setTimeout(function(){
     user.css("background-image", "url(" + user.data().idleSprite + ")")
-},1300)
-// user.css("background-image", "url(" + ' Sprites/Warrior/Warrior-Walk.gif' + ")")
+},1600)
+// ////////////
+// caster.animate({'left':'-=3em'},500,"linear")
+//         setTimeout(function(){
+//             caster.css("background-image", "url(" + caster.data().castSprite + ")")
+//             spellAnimation('white')
+//         },500)
+//         setTimeout(function(){
+//             caster.animate({'left':'+=3em'},500,'linear')
+//         },1600)
+//         setTimeout(function(){
+//         caster.css("background-image", "url(" + caster.data().idleSprite + ")")
+//         },1600) 
+
+// ////////////
 
 globalUpdate();
 deathCheckNpc(target)
@@ -442,8 +461,8 @@ const deathCheckPc=()=>{
 const gameOver = () =>{
     if($('#p1').data().hp <= 0&&$('#p2').data().hp <= 0&&$('#p3').data().hp <= 0&&$('#p4').data().hp <= 0){     
     chime('Game Over')
-    $('audio').attr('src','audio/gameOver.mp3')
-    document.querySelector('audio').play()
+    $('#bgm').attr('src','audio/gameOver.mp3')
+    document.querySelector('#bgm').play()
     clearInterval(buffer)
     }
 
@@ -476,6 +495,7 @@ const fighter = {
     idleSprite: 'Sprites/Warrior/Warrior-Walk.gif',
     deathSprite: 'Sprites/Warrior/Warrior-Dead.gif',
     victorySprite: 'Sprites/Warrior/Warrior-Victory.gif',
+    hitSFX: 'audio/SFX/SwordSlash.wav',
     updateHUD(){
         $('#p1_hp').text(`HP:${this.hp}/${this.hpMax}`)
         $('#p1_mp').text(`MP:${this.mp}/${this.mpMax}`)
@@ -504,6 +524,7 @@ const monk = {
     idleSprite: 'Sprites/Monk/Monk-Walk.gif',
     deathSprite: 'Sprites/Monk/Monk-Dead.gif',
     victorySprite:'Sprites/Monk/Monk-Victory.gif',
+    hitSFX: 'audio/SFX/HitFist.wav',
     updateHUD(){
         $('#p2_hp').text(`HP:${this.hp}/${this.hpMax}`)
         $('#p2_mp').text(`MP:${this.mp}/${this.mpMax}`)
@@ -532,6 +553,7 @@ const whiteMage = {
     castSprite: 'Sprites/WhiteMage/WhiteMage-cast.gif',
     deathSprite: 'Sprites/WhiteMage/WhiteMage-Dead.gif',
     victorySprite: 'Sprites/WhiteMage/WhiteMage-Victory.gif',
+    hitSFX: 'audio/SFX/SwordSlash.wav',
     updateHUD(){
         $('#p3_hp').text(`HP:${this.hp}/${this.hpMax}`)
         $('#p3_mp').text(`MP:${this.mp}/${this.mpMax}`)
@@ -561,6 +583,7 @@ const blackMage = {
     castSprite: 'Sprites/BlackMage/BlackMage-cast.gif',
     deathSprite: 'Sprites/BlackMage/BlackMage-Dead.gif',
     victorySprite: 'Sprites/BlackMage/BlackMage-Victory.gif',
+    hitSFX: 'audio/SFX/SwordSlash.wav',
     updateHUD(){
         $('#p4_hp').text(`HP:${this.hp}/${this.hpMax}`)
         $('#p4_mp').text(`MP:${this.mp}/${this.mpMax}`)
@@ -638,8 +661,8 @@ const healthUpdate =()=>{
         }
         $('#commands>div').unbind('click')
         chime('Select a Target');
-        document.querySelector('audio').play()
-        document.querySelector('audio').loop='true'
+        document.querySelector('#bgm').play()
+        document.querySelector('#bgm').loop='true'
     })
 }
 // magicCommand
@@ -756,7 +779,7 @@ const runTurn=(i)=>{
         attackCmd(turnOrder[i])            
     }
     if(i>=4&&i<turnOrder.length){
-        document.querySelector('audio').play()
+        document.querySelector('#bgm').play()
         if(turnOrder[i].data().hp <= 0){
             turn++
             console.log('11')
