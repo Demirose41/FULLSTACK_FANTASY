@@ -7,10 +7,18 @@ const checkVictory=()=>{
     if($('#e1').data().hp <= 0&&$('#e2').data().hp <= 0&&$('#e3').data().hp <= 0&&$('#e4').data().hp <= 0&&$('#e5').data().hp <= 0){
        
         let buffer = setInterval(function() {chime('Victory!!!')
-        $('#p1').css("background-image", "url(" + fighter.victorySprite + ")")
-        $('#p2').css("background-image", "url(" + monk.victorySprite + ")")
-        $('#p3').css("background-image", "url(" + whiteMage.victorySprite + ")")
-        $('#p4').css("background-image", "url(" + blackMage.victorySprite + ")")
+        if($('#p1').data().hp > 0){
+            $('#p1').css("background-image", "url(" + fighter.victorySprite + ")")
+        }
+        if($('#p2').data().hp >0){
+            $('#p2').css("background-image", "url(" + monk.victorySprite + ")")
+        }
+        if($('#p3').data().hp >0){
+            $('#p3').css("background-image", "url(" + whiteMage.victorySprite + ")")
+        }
+        if($('#p4').data().hp >0){
+            $('#p4').css("background-image", "url(" + blackMage.victorySprite + ")")
+        }
         $('#bgm').attr('src','audio/11.mp3')
         document.querySelector('#bgm').play()
         clearInterval(buffer)
@@ -85,19 +93,6 @@ const spellAnimation = (color)=>{
         }
     },150)
 }
-// const spellAnimation=(caster,color)=>{
-//     caster.animate({'left':'-=3em'},500,"linear")
-//     setTimeout(function(){
-//         caster.css("background-image", "url(" + caster.data().castSprite + ")")
-//         spellFlash(color);
-//     },500)
-//     setTimeout(function(){
-//         caster.animate({'left':'+=3em'},500,'linear')
-//     },1300)
-//     setTimeout(function(){
-//     caster.css("background-image", "url(" + caster.data().idleSprite + ")")
-//     },500)  
-// }
 const spellsMaster = {
     // Black Magic
     fire : function(caster,target){
@@ -117,6 +112,9 @@ const spellsMaster = {
        setTimeout(function(){
            caster.css("background-image", "url(" + caster.data().castSprite + ")")
            spellAnimation('red')
+           $('#sfx').attr('src','audio/SFX/Fire1.wav')
+           document.querySelector('#sfx').play()
+           
        },500)
        setTimeout(function(){
            caster.animate({'left':'+=3em'},500,'linear')
@@ -127,29 +125,35 @@ const spellsMaster = {
         let damage= ((caster.data().intellect * 2)+Math.floor(Math.random()*10 +55)*typeBonus)
         target.hp -=damage;
         if(crit == true){
-            chime(`${target.name} takes ${damage} critical damage!!!`)
-            blackMage.mp -=1; 
+            setTimeout(function(){
+                chime(`${target.name} takes ${damage} critical damage!!!`)
+                blackMage.mp -=1; 
+                globalUpdate()
+                deathCheckNpc(target)
+                $('#enemyBench>div').unbind('click')
+                menuWipe()
+                checkVictory()
+                turn++
+                runTurn(turn)
+                caster.animate({'left':'+=1em'},100,"linear")
+                return 
+            },1600)            
+        }else{
+        
+        setTimeout(function(){
+            chime(`${target.name} takes ${damage} damage`)
             globalUpdate()
             deathCheckNpc(target)
-            $('#enemyBench>div').unbind('click')
-            caster.data().action++
+            blackMage.mp -=1; 
+            $('#enemyBench>div').unbind('click');
             menuWipe()
             checkVictory()
             turn++
             runTurn(turn)
+            caster.animate({'left':'+=1em'},100,"linear")
             return 
-        }else{
-        chime(`${target.name} takes ${damage} damage`)
-        globalUpdate()
-        deathCheckNpc(target)
+            },1600)
         }
-        blackMage.mp -=1; 
-        $('#enemyBench>div').unbind('click');
-        menuWipe()
-        checkVictory()
-        turn++
-        runTurn(turn)
-        return 
     },
     thunder : function(caster,target){
         $('.listMenu').hide()
@@ -166,6 +170,8 @@ const spellsMaster = {
         setTimeout(function(){
             caster.css("background-image", "url(" + caster.data().castSprite + ")")
             spellAnimation('yellow')
+            $('#sfx').attr('src','audio/SFX/Bolt1.wav')
+           document.querySelector('#sfx').play()
         },500)
         setTimeout(function(){
             caster.animate({'left':'+=3em'},500,'linear')
@@ -176,29 +182,36 @@ const spellsMaster = {
         let damage= ((caster.data().intellect * 2)+Math.floor(Math.random()*10 +55)*typeBonus)
         target.hp -=damage
         if(crit == true){
-            chime(`${target.name} takes ${damage} critical damage!!!`)
-            blackMage.mp -=1; 
-            globalUpdate()
-            deathCheckNpc(target)
-            $('#enemyBench>div').unbind('click')
-            menuWipe()
-            checkVictory()
-            turn++
-            runTurn(turn)
-            return 
+            setTimeout(function(){
+
+                chime(`${target.name} takes ${damage} critical damage!!!`)
+                blackMage.mp -=1; 
+                globalUpdate()
+                deathCheckNpc(target)
+                $('#enemyBench>div').unbind('click')
+                menuWipe()
+                checkVictory()
+                turn++
+                caster.animate({'left':'+=1em'},100,"linear")
+                runTurn(turn)
+                return 
+            },1600)
         }else{
-        chime(`${target.name} takes ${damage} damage`)
-        globalUpdate()
-        deathCheckNpc(target)
-        }
-        blackMage.mp -=1;
-        $('#enemyBench>div').unbind('click') 
-        caster.data().action++
-        menuWipe()
-        checkVictory()
-        turn++
-        runTurn(turn)
-        return 
+        
+            setTimeout(function(){
+                chime(`${target.name} takes ${damage} damage`)
+                globalUpdate()
+                deathCheckNpc(target)
+                blackMage.mp -=1;
+                $('#enemyBench>div').unbind('click') 
+                caster.data().action++
+                menuWipe()
+                checkVictory()
+                turn++
+                caster.animate({'left':'+=1em'},100,"linear")
+                runTurn(turn)
+                return },1600)
+            }
     },
     ice : function(caster,target){
         $('.listMenu').hide()
@@ -215,6 +228,8 @@ const spellsMaster = {
         setTimeout(function(){
             caster.css("background-image", "url(" + caster.data().castSprite + ")")
             spellAnimation('blue')
+            $('#sfx').attr('src','audio/SFX/Ice1.wav')
+           document.querySelector('#sfx').play()
         },500)
         setTimeout(function(){
             caster.animate({'left':'+=3em'},500,'linear')
@@ -226,29 +241,35 @@ const spellsMaster = {
         blackMage.mp-- 
         target.hp -=damage
         if(crit == true){
-            chime(`${target.name} takes ${damage} critical damage!!!`)
+            setTimeout(function(){
+
+                chime(`${target.name} takes ${damage} critical damage!!!`)
+                blackMage.mp -=1; 
+                globalUpdate()
+                deathCheckNpc(target)
+                $('#enemyBench>div').unbind('click')
+                menuWipe()
+                checkVictory()
+                turn++
+                caster.animate({'left':'+=1em'},100,"linear")
+                runTurn(turn)
+                return 
+            },1600)
+        }else{
+        setTimeout(function(){
+            chime(`${target.name} takes ${damage} damage`)
             globalUpdate()
             deathCheckNpc(target)
-            $('#enemyBench>div').unbind('click')
+            blackMage.mp -=1;
+            $('#enemyBench>div').unbind('click') 
             caster.data().action++
             menuWipe()
             checkVictory()
             turn++
+            caster.animate({'left':'+=1em'},100,"linear")
             runTurn(turn)
-            return 
-        }else{
-        chime(`${target.name} takes ${damage} damage`)
-        globalUpdate()
-        deathCheckNpc(target)
-        }
-        $('#enemyBench>div').unbind('click')
-        blackMage.mp--
-        caster.data().action++
-        menuWipe()
-        checkVictory()
-        turn++
-        runTurn(turn)
-        return 
+            return },1600)
+                }
     },
     // White Magic
     cure : function(caster,target){
@@ -259,6 +280,12 @@ const spellsMaster = {
          setTimeout(function(){
              caster.css("background-image", "url(" + caster.data().castSprite + ")")
              spellAnimation('skyblue')
+             $('#sfx').attr('src','audio/SFX/Cure11.wav')
+             document.querySelector('#sfx').play()
+             setTimeout(function(){
+              $('#sfx').attr('src','audio/SFX/Cure12.wav')
+              document.querySelector('#sfx').play()
+          },2000)
          },500)
          setTimeout(function(){
              caster.animate({'left':'+=3em'},500,'linear')
@@ -272,15 +299,18 @@ const spellsMaster = {
         if(target.hp > target.hpMax){
             target.hp = target.hpMax
         }
-        chime(`${target.name} is healed for ${healing} HP`)
-        healthUpdate()
-        globalUpdate()
-        menuWipe()
-        checkVictory()
-        turn++
-        console.log('7')
-        runTurn(turn)
-        return
+        setTimeout(function(){
+            chime(`${target.name} is healed for ${healing} HP`)
+            healthUpdate()
+            globalUpdate()
+            menuWipe()
+            checkVictory()
+            turn++
+            caster.animate({'left':'+=1em'},100,"linear")
+            runTurn(turn)
+            return
+        },1600)
+        
     },
     holy : function(caster,target){
         if(caster.data().mp <= 0|| target.dead==true){
@@ -300,7 +330,10 @@ const spellsMaster = {
         setTimeout(function(){
             caster.css("background-image", "url(" + caster.data().castSprite + ")")
             spellAnimation('white')
-        },500)
+
+            $('#sfx').attr('src','audio/SFX/HealingWind.wav')
+            document.querySelector('#sfx').play()
+            },500)
         setTimeout(function(){
             caster.animate({'left':'+=3em'},500,'linear')
         },1600)
@@ -311,34 +344,41 @@ const spellsMaster = {
         whiteMage.mp-=2
         target.hp -=damage
         if(crit == true){
-            chime(`${target.name} takes ${damage} critical damage!!!`)
+            setTimeout(function(){
+                chime(`${target.name} takes ${damage} critical damage!!!`)
+                globalUpdate()
+                deathCheckNpc(target)
+                $('#enemyBench>div').unbind('click')
+                caster.data().action++
+                menuWipe()
+                checkVictory()
+                turn++
+                caster.animate({'left':'+=1em'},100,"linear")
+                runTurn(turn)
+                return 
+            },1600)
+        }else{
+        setTimeout(function(){
+            chime(`${target.name} takes ${damage} damage`)
             globalUpdate()
             deathCheckNpc(target)
             $('#enemyBench>div').unbind('click')
+            whiteMage.mp -=2
             caster.data().action++
             menuWipe()
             checkVictory()
             turn++
+            caster.animate({'left':'+=1em'},100,"linear")
             runTurn(turn)
             return 
-        }else{
-        chime(`${target.name} takes ${damage} damage`)
-        globalUpdate()
-        deathCheckNpc(target)
-        }
-        $('#enemyBench>div').unbind('click')
-        whiteMage.mp -=2
-        caster.data().action++
-        menuWipe()
-        checkVictory()
-        turn++
-        runTurn(turn)
-        return 
+
+        },1600 )
     }
+}
 }
 // Attack Command
 const attack = (user,target)=>{
-
+    menuWipe()
 if(target.hp == 0){
     return
 }    
@@ -366,28 +406,16 @@ setTimeout(function(){
 setTimeout(function(){
     user.css("background-image", "url(" + user.data().idleSprite + ")")
 },1600)
-// ////////////
-// caster.animate({'left':'-=3em'},500,"linear")
-//         setTimeout(function(){
-//             caster.css("background-image", "url(" + caster.data().castSprite + ")")
-//             spellAnimation('white')
-//         },500)
-//         setTimeout(function(){
-//             caster.animate({'left':'+=3em'},500,'linear')
-//         },1600)
-//         setTimeout(function(){
-//         caster.css("background-image", "url(" + caster.data().idleSprite + ")")
-//         },1600) 
+setTimeout(function(){
+    globalUpdate();
+    deathCheckNpc(target)
+    turn++
+    user.animate({'left':'+=1em'},100,"linear")
+    console.log('8')
+    runTurn(turn)
+    return 
+},1600)
 
-// ////////////
-
-globalUpdate();
-deathCheckNpc(target)
-menuWipe()
-turn++
-console.log('8')
-runTurn(turn)
-return 
 }
 const npcAttack = (user,target)=>{
     
@@ -410,6 +438,9 @@ if(target.hp < 0){
 }
 chime(`${target.name} takes ${total} damage`)
 user.animate({'left':'+=3em'},500,"linear")
+setTimeout(function(){
+    $('#sfx').attr('src',`${user.data().hitSFX}`)
+    document.querySelector('#sfx').play()},500)
 user.animate({'left':'-=3em'},500,"linear")
 // user.css("background-image", "url(" + ' Sprites/Warrior/Warrior-Walk.gif' + ")")
 healthUpdate ()
@@ -421,6 +452,7 @@ console.log('9')
 // runTurn(turn)
 return    
 }
+
 const menuWipe = ()=>{
     $('#commands>div').unbind('click')
     $('#enemyBench>div').unbind('click')
@@ -610,6 +642,7 @@ class goblin {
         this.npc = true
         this.weakness = ['fire']
         this.dead = false
+        this.hitSFX = 'audio/SFX/SwordSlash.wav'
     }
 
 
@@ -773,10 +806,13 @@ const runTurn=(i)=>{
             console.log('Party Member Dead')
             runTurn(turn); 
         }
-        else if(turnOrder[i].data().mpMax != 0){
-            magicCmd(turnOrder[i])
+        else{ 
+            if(turnOrder[i].data().mpMax != 0){
+                magicCmd(turnOrder[i])
+            }
+                attackCmd(turnOrder[i])  
+                turnOrder[i].animate({'left':'-=1em'},100,          "linear")          
         }
-        attackCmd(turnOrder[i])            
     }
     if(i>=4&&i<turnOrder.length){
         document.querySelector('#bgm').play()
