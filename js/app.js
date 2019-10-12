@@ -85,6 +85,19 @@ const spellAnimation = (color)=>{
         }
     },150)
 }
+// const spellAnimation=(caster,color)=>{
+//     caster.animate({'left':'-=3em'},500,"linear")
+//     setTimeout(function(){
+//         caster.css("background-image", "url(" + caster.data().castSprite + ")")
+//         spellFlash(color);
+//     },500)
+//     setTimeout(function(){
+//         caster.animate({'left':'+=3em'},500,'linear')
+//     },1300)
+//     setTimeout(function(){
+//     caster.css("background-image", "url(" + caster.data().idleSprite + ")")
+//     },500)  
+// }
 const spellsMaster = {
     // Black Magic
     fire : function(caster,target){
@@ -101,12 +114,16 @@ const spellsMaster = {
            crit = true;
        }
        caster.animate({'left':'-=3em'},500,"linear")
-       caster.css("background-image", "url(" + caster.data().castSprite + ")")
-       spellAnimation('red');
-       caster.animate({'left':'+=3em'},500,'linear')
+       setTimeout(function(){
+           caster.css("background-image", "url(" + caster.data().castSprite + ")")
+           spellAnimation('red')
+       },500)
+       setTimeout(function(){
+           caster.animate({'left':'+=3em'},500,'linear')
+       },1600)
        setTimeout(function(){
        caster.css("background-image", "url(" + caster.data().idleSprite + ")")
-       },1300)  
+       },1600) 
         let damage= ((caster.data().intellect * 2)+Math.floor(Math.random()*10 +55)*typeBonus)
         target.hp -=damage;
         if(crit == true){
@@ -146,11 +163,16 @@ const spellsMaster = {
             crit = true
         }
         caster.animate({'left':'-=3em'},500,"linear")
-       caster.css("background-image", "url(" + caster.data().castSprite + ")")
-       caster.animate({'left':'+=3em'},500,'linear')
-       setTimeout(function(){
-       caster.css("background-image", "url(" + caster.data().idleSprite + ")")
-       },1300) 
+        setTimeout(function(){
+            caster.css("background-image", "url(" + caster.data().castSprite + ")")
+            spellAnimation('yellow')
+        },500)
+        setTimeout(function(){
+            caster.animate({'left':'+=3em'},500,'linear')
+        },1600)
+        setTimeout(function(){
+        caster.css("background-image", "url(" + caster.data().idleSprite + ")")
+        },1600) 
         let damage= ((caster.data().intellect * 2)+Math.floor(Math.random()*10 +55)*typeBonus)
         target.hp -=damage
         if(crit == true){
@@ -190,14 +212,16 @@ const spellsMaster = {
             crit = true
         }
         caster.animate({'left':'-=3em'},500,"linear")
-        caster.css("background-image", "url(" + caster.data().castSprite + ")")
-        spellAnimation('blue')
+        setTimeout(function(){
+            caster.css("background-image", "url(" + caster.data().castSprite + ")")
+            spellAnimation('blue')
+        },500)
         setTimeout(function(){
             caster.animate({'left':'+=3em'},500,'linear')
-        },2000)
+        },1600)
         setTimeout(function(){
         caster.css("background-image", "url(" + caster.data().idleSprite + ")")
-        },3300) 
+        },1600) 
         let damage= ((caster.data().intellect * 2)+Math.floor(Math.random()*10 +55)*typeBonus)
         blackMage.mp-- 
         target.hp -=damage
@@ -231,12 +255,17 @@ const spellsMaster = {
         if(caster.data().mp <= 0|| target.dead==true){
             return 
          }
-        caster.animate({'left':'-=3em'},500,"linear")
-        caster.css("background-image", "url(" + caster.data().castSprite + ")")
-        caster.animate({'left':'+=3em'},500,'linear')
-        setTimeout(function(){
-        caster.css("background-image", "url(" + caster.data().idleSprite + ")")
-        },1300) 
+         caster.animate({'left':'-=3em'},500,"linear")
+         setTimeout(function(){
+             caster.css("background-image", "url(" + caster.data().castSprite + ")")
+             spellAnimation('skyblue')
+         },500)
+         setTimeout(function(){
+             caster.animate({'left':'+=3em'},500,'linear')
+         },1600)
+         setTimeout(function(){
+         caster.css("background-image", "url(" + caster.data().idleSprite + ")")
+         },1600) 
         let healing= ((caster.data().mind * 2)+Math.floor(Math.random()*10 +40))
         whiteMage.mp--
         target.hp += healing
@@ -268,11 +297,16 @@ const spellsMaster = {
             crit = true
         }
         caster.animate({'left':'-=3em'},500,"linear")
-        caster.css("background-image", "url(" + caster.data().castSprite + ")")
-        caster.animate({'left':'+=3em'},500,'linear')
+        setTimeout(function(){
+            caster.css("background-image", "url(" + caster.data().castSprite + ")")
+            spellAnimation('white')
+        },500)
+        setTimeout(function(){
+            caster.animate({'left':'+=3em'},500,'linear')
+        },1600)
         setTimeout(function(){
         caster.css("background-image", "url(" + caster.data().idleSprite + ")")
-        },1300) 
+        },1600) 
         let damage= ((caster.data().intellect * 2)+Math.floor(Math.random()*10 +55)*typeBonus)
         whiteMage.mp-=2
         target.hp -=damage
@@ -539,7 +573,7 @@ class goblin {
         this.name = name;
         this.order=order;
         this.level =1
-        this.attack=150
+        this.attack=20
         this.hp=120
         this.mp=6
         this.strength=5
