@@ -3,7 +3,7 @@ let round = 1;
 let turn = 0;
 
 const checkVictory=()=>{
-    console.log('checking death')
+    gameOver()
     if($('#e1').data().hp <= 0&&$('#e2').data().hp <= 0&&$('#e3').data().hp <= 0&&$('#e4').data().hp <= 0&&$('#e5').data().hp <= 0){
        
         let buffer = setInterval(function() {chime('Victory!!!')
@@ -70,6 +70,21 @@ const itemsMaster ={
     }
 }
 // Master Spell list
+const spellAnimation = (color)=>{
+    let i = 0
+    let frame =setInterval(function(){
+        if(i==7){
+            clearInterval(frame)
+        }
+        if(i % 2 == 0){
+            $('body').css('background-color',`${color}`)
+            i++
+        }else{
+            $('body').css('background-color','black')
+            i++
+        }
+    },150)
+}
 const spellsMaster = {
     // Black Magic
     fire : function(caster,target){
@@ -87,6 +102,7 @@ const spellsMaster = {
        }
        caster.animate({'left':'-=3em'},500,"linear")
        caster.css("background-image", "url(" + caster.data().castSprite + ")")
+       spellAnimation('red');
        caster.animate({'left':'+=3em'},500,'linear')
        setTimeout(function(){
        caster.css("background-image", "url(" + caster.data().idleSprite + ")")
@@ -175,10 +191,13 @@ const spellsMaster = {
         }
         caster.animate({'left':'-=3em'},500,"linear")
         caster.css("background-image", "url(" + caster.data().castSprite + ")")
-        caster.animate({'left':'+=3em'},500,'linear')
+        spellAnimation('blue')
+        setTimeout(function(){
+            caster.animate({'left':'+=3em'},500,'linear')
+        },2000)
         setTimeout(function(){
         caster.css("background-image", "url(" + caster.data().idleSprite + ")")
-        },1300) 
+        },3300) 
         let damage= ((caster.data().intellect * 2)+Math.floor(Math.random()*10 +55)*typeBonus)
         blackMage.mp-- 
         target.hp -=damage
@@ -387,17 +406,11 @@ const deathCheckPc=()=>{
     }
 }
 const gameOver = () =>{
-    if($('#p1').data().hp <= 0&&$('#p2').data().hp <= 0&&$('#p3').data().hp <= 0&&$('#p4').data().hp <= 0&&$('#p5').data().hp <= 0){ 
-    let buffer = setInterval(function() {chime('Game Over')
-    $('#p1').css("background-image", "url(" + fighter.victorySprite + ")")
-    $('#p2').css("background-image", "url(" + monk.victorySprite + ")")
-    $('#p3').css("background-image", "url(" + whiteMage.victorySprite + ")")
-    $('#p4').css("background-image", "url(" + blackMage.victorySprite + ")")
+    if($('#p1').data().hp <= 0&&$('#p2').data().hp <= 0&&$('#p3').data().hp <= 0&&$('#p4').data().hp <= 0){     
+    chime('Game Over')
     $('audio').attr('src','audio/gameOver.mp3')
     document.querySelector('audio').play()
     clearInterval(buffer)
-},2000)
-
     }
 
 }
@@ -526,7 +539,7 @@ class goblin {
         this.name = name;
         this.order=order;
         this.level =1
-        this.attack=15
+        this.attack=150
         this.hp=120
         this.mp=6
         this.strength=5
@@ -698,9 +711,9 @@ const runTurn=(i)=>{
    deathCheckPc()
     if(i<4){
          
-        if(turnOrder[i].hp == 0){
+        if(turnOrder[i].data().hp <= 0){
             turn++
-            console.log('10')
+            console.log('Party Member Dead')
             runTurn(turn); 
         }
         else if(turnOrder[i].data().mpMax != 0){
@@ -733,7 +746,7 @@ const runTurn=(i)=>{
             $('#magic').text('Turn')
             let enemyTimer =setInterval(function(){
                 let selector = Math.floor(Math.random()*4)
-                console.log(selector)
+                
                 if(turnOrder[i].hp != 0){
                     npcAttack(turnOrder[i],turnOrder[selector].data())
                     clearInterval(enemyTimer)
@@ -750,18 +763,13 @@ const runTurn=(i)=>{
     }
    
     if (turn == turnOrder.length){
-        if(turnOrder[4].hp == 0&&turnOrder[5].hp == 0&&turnOrder[6].hp == 0&&turnOrder[7].hp == 0&&turnOrder[8].hp == 0){
-            round++
-            chime('Victory!!!')
-            roundSelector(round)
-            return 
-        }else{
+        
             $('#attack').text('Attack')
             $('#magic').text('')
             turn=0
             chime('Your Turn')
             runTurn(turn)
-        }
+        
     }
     
 }

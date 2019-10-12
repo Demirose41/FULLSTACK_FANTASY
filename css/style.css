@@ -6,9 +6,6 @@ body{
     background-size: 50em;
     font-family: FF2,'Times New Roman', Times, serif;
 }
-#Pointer{
-    visibility: hidden;
-}
 audio{
     position: fixed;
 }
@@ -21,6 +18,9 @@ div{
     background-position: center;
     background-repeat:no-repeat;
     
+}
+#Pointer{
+    visibility: hidden;
 }
 #messageWindow{
     border:3px solid white;
