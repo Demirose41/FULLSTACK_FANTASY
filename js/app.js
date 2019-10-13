@@ -33,6 +33,7 @@ const Round1=()=>{
         let letters = [' ','A','B','C','D','E']
         let enemy = new goblin(`Goblin${letters[i]}`,`${i}`)
         $(`#e${i}`).data(enemy);
+        $(`#e${i}`).css('background-image',"url(" + $(`#e${i}`).data().idleSprite + ")")
     }
 }
 const Round2=()=>{
@@ -42,12 +43,16 @@ const Round2=()=>{
         let letters = [' ','A','B','C','D','E']
         let enemy = new goblin(`Goblin${letters[i]}`,`${i}`)
         $(`#e${i}`).data(enemy);
+        $(`#e${i}`).css('background-image',"url(" + $(`#e${i}`).data().idleSprite + ")")
     }
 }
 // Round Loader.. Will load in the enemies designated for each specific round
 const roundSelector=(num)=>{
- if(num=1){
+ if(num==1){
      Round1();
+ }
+ else if(num==2){
+     Round2()
  }
 }
 // Master Lists of items 
@@ -643,10 +648,8 @@ class goblin {
         this.weakness = ['fire']
         this.dead = false
         this.hitSFX = 'audio/SFX/SwordSlash.wav'
+        this.idleSprite = 'Sprites/Enemies/Goblin.gif'
     }
-
-
-    
 }
 
 
@@ -871,7 +874,7 @@ const runTurn=(i)=>{
 // Round 1 
 // RUNNING CODE
 
-roundSelector(1);
+roundSelector(round);
 globalUpdate()
 $('.listMenu').hide()
 let turnOrder = []
