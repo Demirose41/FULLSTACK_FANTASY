@@ -3,9 +3,10 @@ body{
     background-color: black;
     background-image: url(../Sprites/Backgrounds/Forest.gif);
     background-repeat: repeat-x;
-    background-size: 50em;
+    background-size: 100vh;
     font-family: FF2,'Times New Roman', Times, serif;
-    font-size: 2vh;
+    font-size: 3vh;
+    font-size: 2vw;
 }
 
 audio{
@@ -30,11 +31,13 @@ div{
     background: blue;
     position: fixed;
     left:10%;
+    height: 9vh;
     width: 80%;
     color: white;
     justify-content: center;
     align-items: center;
-    display:none;           
+    display:none;  
+    font-size: 3vh;         
 }
 #enemyBench{
     position: fixed;
@@ -52,7 +55,7 @@ div{
     position: relative;
     background-size: 10vh;
     height:10vh;
-    width:4em;
+    width:15vw;
     background-color: rgba(0, 0, 0, 0);
     
     /* background-image: url('../Sprites/Enemies/Goblin.gif') */
@@ -79,7 +82,7 @@ div{
 #partyBench div{
     background-size: 7vh;
     height:14vh;
-    width: 4em;
+    width: 14vw;
     position: relative;
     background-color: rgba(0, 0, 0, 0);
 }
@@ -90,7 +93,7 @@ div{
     background: blue;
     position: fixed;
     top: 70%;
-    height: 28%;
+    height: 27%;
     width: 100%;
     color: white;
     justify-content: flex-start;
@@ -99,18 +102,21 @@ div{
 #commands{
     border:3px solid white;
     display: flex;
+    border-radius: 1vh;
     background: blue;
     position: fixed;
     top: 70%;
     height: 28%;
     width: 20%;
     color: white;
+    font-size: 3vh;
     flex-direction: column;
 }
 #commands > div{
     min-width: 100%;
-    height: 25%;
+    height: 33.333%;
     position: relative;
+    border: solid white;
     }
 #status{
     border:3px solid white;
@@ -137,10 +143,11 @@ div{
     flex-direction: column;
     display: grid;  
     grid-template-columns: 25% 25% 25% 25% ;
-    grid-template-rows: 33%33%33%;   
+    grid-template-rows: 25%25%25%25%;   
 }
-#listMenu > span{
+.listMenu > span{
     visibility: hidden;
+    border: solid white;
     
 }
 
@@ -153,19 +160,22 @@ position: relative;
 background-color:blue;
 height: 100%;
 position: relative;
-width: 20%;
+width: 40%;
+font-size: 2vh;
 }
 .p_hp{
     background-color:blue;
     height: 100%;
     position: relative;
-    width: 40%;
+    width: 30%;
+    font-size: 2vh;
 }
 .p_mp{
     background-color:blue;
     height: 100%;
     position: relative;
-    width: 40%;    
+    width: 30%;    
+    font-size: 2vh;
 }        
 div#p1{
     background-image: url('../Sprites/Warrior/Warrior-Walk.gif');

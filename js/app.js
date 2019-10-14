@@ -398,7 +398,7 @@ target.hp -=total
 if(target.hp < 0){
     target.hp = 0
 }
-chime(`${target.name} takes ${total} damage`)
+chime(`${target.name} it hit ${hits}x takes ${total} damage!`)
 user.animate({'left':'-=3em'},500,"linear")
 
 setTimeout(function(){
@@ -428,8 +428,6 @@ const npcAttack = (user,target)=>{
         return
     }
 let hits = Math.floor(1+((Math.random()*user.data().agility)/5))
-console.log(`Hits : ${hits}`)
-console.log(`agi ${user.data().agility}`)
 let total=0;
 if(target.hp>0)
 {for(let i = 0;i<hits;i++){
@@ -514,13 +512,13 @@ const player ={
 const fighter = {
     name : 'Fighter',
     level : 1,
-    attack : 40,
+    attack : 60,
     hp : 140,
     hpMax:140,
     mp : 0,
     mpMax:0,
     strength : 10,
-    agility : 6,
+    agility : 4,
     intellect : 4,//Int will be spell damage modifier
     defense : 10,
     spellList : [],//If length is less than 1, dont show the spell option in the menu
@@ -542,7 +540,7 @@ const fighter = {
 const monk = {
     name:'Monk',
     level : 1,
-    attack: 28,
+    attack: 55,
     hp : 180,
     hpMax:180,
     mp : 0,
@@ -581,7 +579,7 @@ const whiteMage = {
     mind : 9,
     defense : 5,
     sprite : '',
-    spellList :['cure','cureII','cureIII'],
+    spellList :['cure','cureII','cureIII','holy'],
     abilityList :[],
     npc : false,
     dead:false,
@@ -840,6 +838,7 @@ const runTurn=(i)=>{
         } else{
             $('#attack').text('Enemy')
             $('#magic').text('Turn')
+            
             let enemyTimer =setInterval(function(){
                 let selector = Math.floor(Math.random()*4)
                 
