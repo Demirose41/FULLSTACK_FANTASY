@@ -1,5 +1,5 @@
 # FINAL FANTASY BATTLE
-https://demirose41.github.io/project1/ - PLAY NOW!!!
+[https://demirose41.github.io/project1/](https://demirose41.github.io/FULLSTACK_FANTASY/) - PLAY NOW!!!
 !!!About!!!
 This is a game designed to emulate the early final fantasy battle system with HTMl.
 WHen the game starts, the round begins and you are selecting command. From there the procedure will be.
